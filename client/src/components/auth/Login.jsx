@@ -7,6 +7,11 @@ const Login = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hoveredField, setHoveredField] = useState(null);
+  const [cardHovered, setCardHovered] = useState(false);
+  const [logoHovered, setLogoHovered] = useState(false);
+  const [buttonHovered, setButtonHovered] = useState(false);
+  const [demoBoxHovered, setDemoBoxHovered] = useState(false);
+  const [linkHovered, setLinkHovered] = useState({ forgotPassword: false, register: false });
   
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -55,14 +60,16 @@ const Login = () => {
       width: '100%',
       maxWidth: '480px',
       border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: `
-        0 8px 32px rgba(0, 0, 0, 0.1),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.05)
-      `,
+      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05)',
       animation: 'slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
       position: 'relative',
-      zIndex: 2
+      zIndex: 2,
+      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+      transform: cardHovered ? 'translateY(-8px)' : 'translateY(0)'
+    },
+
+    cardHover: {
+      boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.1)'
     },
 
     glowEffect: {
@@ -87,12 +94,8 @@ const Login = () => {
       margin: '0 auto 32px',
       border: '1px solid rgba(255, 255, 255, 0.3)',
       boxShadow: '0 15px 35px rgba(102, 126, 234, 0.2)',
-      transform: 'perspective(1000px) rotateY(0deg)',
+      transform: logoHovered ? 'perspective(1000px) rotateY(15deg) scale(1.05)' : 'perspective(1000px) rotateY(0deg)',
       transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
-    },
-
-    logoHover: {
-      transform: 'perspective(1000px) rotateY(15deg) scale(1.05)'
     },
 
     logoIcon: {
@@ -155,33 +158,35 @@ const Login = () => {
       transition: 'all 0.3s ease'
     },
 
-    input: {
-      width: '100%',
-      padding: '22px 24px 22px 64px',
-      border: '2px solid rgba(255, 255, 255, 0.1)',
-      borderRadius: '20px',
-      fontSize: '16px',
-      fontWeight: '500',
-      background: 'rgba(255, 255, 255, 0.05)',
-      color: '#fff',
-      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-      outline: 'none',
-      backdropFilter: 'blur(10px)'
-    },
-
-    inputFocus: {
-      borderColor: 'rgba(255, 255, 255, 0.3)',
-      background: 'rgba(255, 255, 255, 0.08)',
-      boxShadow: `
-        0 0 0 4px rgba(255, 255, 255, 0.1),
-        inset 0 2px 8px rgba(255, 255, 255, 0.1)
-      `,
-      transform: 'translateY(-2px)'
-    },
-
-    errorInput: {
-      borderColor: 'rgba(239, 68, 68, 0.5)',
-      background: 'rgba(239, 68, 68, 0.05)'
+    input: (field, isFocused) => {
+      const hasError = errors[field];
+      const isHovered = hoveredField === field;
+      
+      return {
+        width: '100%',
+        padding: '22px 24px 22px 64px',
+        border: `2px solid ${
+          hasError ? 'rgba(239, 68, 68, 0.5)' :
+          isFocused ? 'rgba(255, 255, 255, 0.3)' :
+          'rgba(255, 255, 255, 0.1)'
+        }`,
+        borderRadius: '20px',
+        fontSize: '16px',
+        fontWeight: '500',
+        background: hasError ? 'rgba(239, 68, 68, 0.05)' : 
+                   isFocused ? 'rgba(255, 255, 255, 0.08)' : 
+                   'rgba(255, 255, 255, 0.05)',
+        color: '#fff',
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        outline: 'none',
+        backdropFilter: 'blur(10px)',
+        transform: isHovered || isFocused ? 'translateY(-2px)' : 'translateY(0)',
+        boxShadow: isFocused ? 
+          '0 0 0 4px rgba(255, 255, 255, 0.1), inset 0 2px 8px rgba(255, 255, 255, 0.1)' : 
+          'none',
+        cursor: isSubmitting ? 'not-allowed' : 'text',
+        opacity: isSubmitting ? 0.7 : 1
+      };
     },
 
     errorText: {
@@ -199,13 +204,15 @@ const Login = () => {
     button: {
       width: '100%',
       padding: '24px 36px',
-      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))',
+      background: buttonHovered && !isSubmitting ? 
+        'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2))' : 
+        'linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))',
       color: 'white',
       border: '1px solid rgba(255, 255, 255, 0.2)',
       borderRadius: '20px',
       fontSize: '16px',
       fontWeight: '700',
-      cursor: 'pointer',
+      cursor: isSubmitting ? 'not-allowed' : 'pointer',
       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
       display: 'flex',
       alignItems: 'center',
@@ -214,23 +221,23 @@ const Login = () => {
       marginTop: '16px',
       backdropFilter: 'blur(10px)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      transform: buttonHovered && !isSubmitting ? 'translateY(-3px)' : 'translateY(0)',
+      boxShadow: buttonHovered && !isSubmitting ? '0 20px 40px rgba(0, 0, 0, 0.2)' : 'none'
     },
 
-    buttonHover: {
-      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2))',
-      transform: 'translateY(-3px)',
-      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)'
-    },
-
-    buttonRipple: {
+    buttonRipple: (x, y, size) => ({
       position: 'absolute',
       borderRadius: '50%',
       background: 'rgba(255, 255, 255, 0.2)',
       transform: 'scale(0)',
       animation: 'ripple 0.6s linear',
-      pointerEvents: 'none'
-    },
+      pointerEvents: 'none',
+      left: x + 'px',
+      top: y + 'px',
+      width: size + 'px',
+      height: size + 'px'
+    }),
 
     demoBox: {
       background: 'rgba(255, 255, 255, 0.05)',
@@ -240,12 +247,9 @@ const Login = () => {
       marginTop: '36px',
       textAlign: 'center',
       backdropFilter: 'blur(10px)',
-      transition: 'all 0.3s ease'
-    },
-
-    demoBoxHover: {
-      transform: 'translateY(-2px)',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)'
+      transition: 'all 0.3s ease',
+      transform: demoBoxHovered ? 'translateY(-2px)' : 'translateY(0)',
+      boxShadow: demoBoxHovered ? '0 10px 30px rgba(0, 0, 0, 0.2)' : 'none'
     },
 
     demoText: {
@@ -291,8 +295,33 @@ const Login = () => {
       fontSize: '14px',
       color: 'rgba(255, 255, 255, 0.5)',
       fontWeight: '500'
-    }
+    },
+
+    forgotPasswordLink: (isHovered) => ({
+      fontSize: '14px',
+      fontWeight: '600',
+      color: isHovered ? '#fff' : 'rgba(255, 255, 255, 0.8)',
+      textDecoration: 'none',
+      transition: 'all 0.2s ease',
+      position: 'relative',
+      paddingBottom: '2px'
+    }),
+
+    registerLink: (isHovered) => ({
+      color: '#fff',
+      fontWeight: '700',
+      textDecoration: 'none',
+      transition: 'all 0.3s ease',
+      marginLeft: '8px',
+      position: 'relative',
+      paddingBottom: '4px'
+    })
   };
+
+  // State for input focus
+  const [focusedField, setFocusedField] = useState(null);
+  // State for ripple effect
+  const [ripple, setRipple] = useState(null);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -300,6 +329,15 @@ const Login = () => {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (ripple) {
+      const timer = setTimeout(() => {
+        setRipple(null);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [ripple]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -353,6 +391,18 @@ const Login = () => {
     }
   };
 
+  const handleButtonClick = (e) => {
+    if (!isSubmitting) {
+      const button = e.currentTarget;
+      const rect = button.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      setRipple({ x, y, size });
+    }
+  };
+
   return (
     <div style={styles.container}>
       {/* Floating Background Shapes */}
@@ -364,19 +414,12 @@ const Login = () => {
       </div>
 
       <div 
-        style={styles.card}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-8px)';
-          e.currentTarget.style.boxShadow = `
-            0 25px 50px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.2),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.1)
-          `;
+        style={{
+          ...styles.card,
+          ...(cardHovered ? styles.cardHover : {})
         }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = styles.card.boxShadow;
-        }}
+        onMouseEnter={() => setCardHovered(true)}
+        onMouseLeave={() => setCardHovered(false)}
       >
         {/* Glow Effect */}
         <div style={styles.glowEffect}></div>
@@ -385,10 +428,8 @@ const Login = () => {
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <div 
             style={styles.logoContainer}
-            onMouseEnter={(e) => Object.assign(e.currentTarget.style, styles.logoHover)}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'perspective(1000px) rotateY(0deg) scale(1)';
-            }}
+            onMouseEnter={() => setLogoHovered(true)}
+            onMouseLeave={() => setLogoHovered(false)}
           >
             <span style={styles.logoIcon}>🔐</span>
           </div>
@@ -429,24 +470,19 @@ const Login = () => {
                 type="email"
                 name="email"
                 required
-                style={{
-                  ...styles.input,
-                  ...(errors.email ? styles.errorInput : {}),
-                  ...(isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {})
-                }}
-                onFocus={(e) => {
-                  Object.assign(e.target.style, styles.inputFocus);
+                style={styles.input('email', focusedField === 'email')}
+                onFocus={() => {
+                  setFocusedField('email');
                   setHoveredField('email');
                 }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.email ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.background = errors.email ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.transform = 'translateY(0)';
-                  setHoveredField(null);
+                onBlur={() => {
+                  setFocusedField(null);
+                  if (hoveredField === 'email') setHoveredField(null);
                 }}
                 onMouseEnter={() => setHoveredField('email')}
-                onMouseLeave={() => hoveredField === 'email' && setHoveredField(null)}
+                onMouseLeave={() => {
+                  if (focusedField !== 'email' && hoveredField === 'email') setHoveredField(null);
+                }}
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
@@ -466,26 +502,15 @@ const Login = () => {
               <label style={styles.label}>Password</label>
               <Link 
                 to="/forgot-password" 
-                style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  textDecoration: 'none',
-                  transition: 'all 0.2s ease',
-                  position: 'relative',
-                  paddingBottom: '2px'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.color = '#fff';
-                  e.target.querySelector('.underline').style.transform = 'scaleX(1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = 'rgba(255, 255, 255, 0.8)';
-                  e.target.querySelector('.underline').style.transform = 'scaleX(0)';
-                }}
+                style={styles.forgotPasswordLink(linkHovered.forgotPassword)}
+                onMouseEnter={() => setLinkHovered(prev => ({ ...prev, forgotPassword: true }))}
+                onMouseLeave={() => setLinkHovered(prev => ({ ...prev, forgotPassword: false }))}
               >
                 Forgot password?
-                <span className="underline" style={styles.linkUnderline}></span>
+                <span className="underline" style={{
+                  ...styles.linkUnderline,
+                  transform: linkHovered.forgotPassword ? 'scaleX(1)' : 'scaleX(0)'
+                }}></span>
               </Link>
             </div>
             <div style={styles.inputContainer}>
@@ -494,24 +519,19 @@ const Login = () => {
                 type="password"
                 name="password"
                 required
-                style={{
-                  ...styles.input,
-                  ...(errors.password ? styles.errorInput : {}),
-                  ...(isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {})
-                }}
-                onFocus={(e) => {
-                  Object.assign(e.target.style, styles.inputFocus);
+                style={styles.input('password', focusedField === 'password')}
+                onFocus={() => {
+                  setFocusedField('password');
                   setHoveredField('password');
                 }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = errors.password ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)';
-                  e.target.style.background = errors.password ? 'rgba(239, 68, 68, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-                  e.target.style.boxShadow = 'none';
-                  e.target.style.transform = 'translateY(0)';
-                  setHoveredField(null);
+                onBlur={() => {
+                  setFocusedField(null);
+                  if (hoveredField === 'password') setHoveredField(null);
                 }}
                 onMouseEnter={() => setHoveredField('password')}
-                onMouseLeave={() => hoveredField === 'password' && setHoveredField(null)}
+                onMouseLeave={() => {
+                  if (focusedField !== 'password' && hoveredField === 'password') setHoveredField(null);
+                }}
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
@@ -530,27 +550,9 @@ const Login = () => {
             type="submit"
             disabled={isSubmitting}
             style={styles.button}
-            onMouseEnter={(e) => !isSubmitting && Object.assign(e.currentTarget.style, styles.buttonHover)}
-            onMouseLeave={(e) => !isSubmitting && (e.currentTarget.style.transform = 'translateY(0)')}
-            onClick={(e) => {
-              if (!isSubmitting) {
-                const button = e.currentTarget;
-                const ripple = document.createElement('span');
-                ripple.style = styles.buttonRipple;
-                
-                const rect = button.getBoundingClientRect();
-                const size = Math.max(rect.width, rect.height);
-                const x = e.clientX - rect.left - size / 2;
-                const y = e.clientY - rect.top - size / 2;
-                
-                ripple.style.width = ripple.style.height = size + 'px';
-                ripple.style.left = x + 'px';
-                ripple.style.top = y + 'px';
-                
-                button.appendChild(ripple);
-                setTimeout(() => ripple.remove(), 600);
-              }
-            }}
+            onMouseEnter={() => !isSubmitting && setButtonHovered(true)}
+            onMouseLeave={() => !isSubmitting && setButtonHovered(false)}
+            onClick={handleButtonClick}
           >
             {isSubmitting ? (
               <>
@@ -571,17 +573,17 @@ const Login = () => {
                 Sign In
               </>
             )}
+            {ripple && (
+              <span style={styles.buttonRipple(ripple.x, ripple.y, ripple.size)}></span>
+            )}
           </button>
         </form>
 
         {/* Demo Account */}
         <div 
           style={styles.demoBox}
-          onMouseEnter={(e) => Object.assign(e.currentTarget.style, styles.demoBoxHover)}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = 'none';
-          }}
+          onMouseEnter={() => setDemoBoxHovered(true)}
+          onMouseLeave={() => setDemoBoxHovered(false)}
         >
           <p style={styles.demoText}>
             <strong>Demo Account:</strong> demo@taskflow.com / demopassword
@@ -593,18 +595,15 @@ const Login = () => {
           Don't have an account?{' '}
           <Link 
             to="/register" 
-            style={styles.link}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#fff';
-              e.target.querySelector('.underline').style.transform = 'scaleX(1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#fff';
-              e.target.querySelector('.underline').style.transform = 'scaleX(0)';
-            }}
+            style={styles.registerLink(linkHovered.register)}
+            onMouseEnter={() => setLinkHovered(prev => ({ ...prev, register: true }))}
+            onMouseLeave={() => setLinkHovered(prev => ({ ...prev, register: false }))}
           >
             Sign up now
-            <span className="underline" style={styles.linkUnderline}></span>
+            <span className="underline" style={{
+              ...styles.linkUnderline,
+              transform: linkHovered.register ? 'scaleX(1)' : 'scaleX(0)'
+            }}></span>
           </Link>
         </div>
 
@@ -651,11 +650,6 @@ const Login = () => {
         /* Enhanced focus styles */
         input::placeholder {
           color: rgba(255, 255, 255, 0.4);
-        }
-        
-        /* Smooth transitions */
-        * {
-          transition: all 0.2s ease;
         }
         
         /* Mobile responsiveness */
