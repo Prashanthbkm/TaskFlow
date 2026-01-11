@@ -16,7 +16,7 @@ const Login = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Enhanced Styles with Glassmorphism
+  // Enhanced Styles with Glassmorphism - FIXED ALIGNMENT
   const styles = {
     container: {
       minHeight: '100vh',
@@ -83,6 +83,13 @@ const Login = () => {
       zIndex: -1
     },
 
+    // CENTERED LOGO AND HEADER
+    headerContainer: {
+      textAlign: 'center',
+      marginBottom: '48px',
+      width: '100%'
+    },
+
     logoContainer: {
       width: '100px',
       height: '100px',
@@ -116,7 +123,8 @@ const Login = () => {
       backgroundClip: 'text',
       marginBottom: '12px',
       textAlign: 'center',
-      letterSpacing: '-0.5px'
+      letterSpacing: '-0.5px',
+      width: '100%'
     },
 
     subtitle: {
@@ -125,12 +133,20 @@ const Login = () => {
       textAlign: 'center',
       marginBottom: '48px',
       fontWeight: '500',
-      lineHeight: '1.6'
+      lineHeight: '1.6',
+      width: '100%'
+    },
+
+    // PROPERLY ALIGNED FORM
+    formContainer: {
+      width: '100%',
+      margin: '0 auto'
     },
 
     formGroup: {
       marginBottom: '32px',
-      position: 'relative'
+      position: 'relative',
+      width: '100%'
     },
 
     label: {
@@ -141,11 +157,13 @@ const Login = () => {
       marginBottom: '12px',
       letterSpacing: '0.3px',
       textTransform: 'uppercase',
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      width: '100%'
     },
 
     inputContainer: {
-      position: 'relative'
+      position: 'relative',
+      width: '100%'
     },
 
     inputIcon: {
@@ -155,7 +173,8 @@ const Login = () => {
       transform: 'translateY(-50%)',
       fontSize: '22px',
       opacity: 0.7,
-      transition: 'all 0.3s ease'
+      transition: 'all 0.3s ease',
+      zIndex: 1
     },
 
     input: (field, isFocused) => {
@@ -185,7 +204,8 @@ const Login = () => {
           '0 0 0 4px rgba(255, 255, 255, 0.1), inset 0 2px 8px rgba(255, 255, 255, 0.1)' : 
           'none',
         cursor: isSubmitting ? 'not-allowed' : 'text',
-        opacity: isSubmitting ? 0.7 : 1
+        opacity: isSubmitting ? 0.7 : 1,
+        boxSizing: 'border-box'
       };
     },
 
@@ -198,7 +218,15 @@ const Login = () => {
       alignItems: 'center',
       gap: '8px',
       opacity: 0,
-      animation: 'fadeIn 0.3s ease forwards'
+      animation: 'fadeIn 0.3s ease forwards',
+      width: '100%'
+    },
+
+    // PROPERLY CENTERED BUTTON
+    buttonContainer: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center'
     },
 
     button: {
@@ -239,6 +267,7 @@ const Login = () => {
       height: size + 'px'
     }),
 
+    // CENTERED DEMO BOX
     demoBox: {
       background: 'rgba(255, 255, 255, 0.05)',
       border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -249,7 +278,8 @@ const Login = () => {
       backdropFilter: 'blur(10px)',
       transition: 'all 0.3s ease',
       transform: demoBoxHovered ? 'translateY(-2px)' : 'translateY(0)',
-      boxShadow: demoBoxHovered ? '0 10px 30px rgba(0, 0, 0, 0.2)' : 'none'
+      boxShadow: demoBoxHovered ? '0 10px 30px rgba(0, 0, 0, 0.2)' : 'none',
+      width: '100%'
     },
 
     demoText: {
@@ -261,11 +291,13 @@ const Login = () => {
       backgroundClip: 'text'
     },
 
+    // CENTERED LINKS
     linkContainer: {
       textAlign: 'center',
       marginTop: '36px',
       fontSize: '15px',
-      color: 'rgba(255, 255, 255, 0.7)'
+      color: 'rgba(255, 255, 255, 0.7)',
+      width: '100%'
     },
 
     link: {
@@ -289,12 +321,14 @@ const Login = () => {
       transition: 'transform 0.3s ease'
     },
 
+    // CENTERED FOOTER
     footer: {
       textAlign: 'center',
       marginTop: '48px',
       fontSize: '14px',
       color: 'rgba(255, 255, 255, 0.5)',
-      fontWeight: '500'
+      fontWeight: '500',
+      width: '100%'
     },
 
     forgotPasswordLink: (isHovered) => ({
@@ -315,9 +349,19 @@ const Login = () => {
       marginLeft: '8px',
       position: 'relative',
       paddingBottom: '4px'
-    })
+    }),
+
+    // Helper for label row alignment
+    labelRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '100%',
+      marginBottom: '12px'
+    }
   };
 
+  // ... (rest of your state and useEffect hooks remain the same)
   // State for input focus
   const [focusedField, setFocusedField] = useState(null);
   // State for ripple effect
@@ -424,8 +468,8 @@ const Login = () => {
         {/* Glow Effect */}
         <div style={styles.glowEffect}></div>
 
-        {/* Logo & Header */}
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        {/* Logo & Header - NOW PROPERLY CENTERED */}
+        <div style={styles.headerContainer}>
           <div 
             style={styles.logoContainer}
             onMouseEnter={() => setLogoHovered(true)}
@@ -448,138 +492,147 @@ const Login = () => {
             border: '1px solid rgba(239, 68, 68, 0.2)',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: '14px',
             fontWeight: '600',
             fontSize: '15px',
             backdropFilter: 'blur(10px)',
-            animation: 'slideDown 0.3s ease'
+            animation: 'slideDown 0.3s ease',
+            width: '100%',
+            textAlign: 'center'
           }}>
             <span style={{ fontSize: '22px' }}>⚠️</span>
             {errors.general}
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} style={{ marginBottom: 0 }}>
-          {/* Email Field */}
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email Address</label>
-            <div style={styles.inputContainer}>
-              <div style={styles.inputIcon}>📧</div>
-              <input
-                type="email"
-                name="email"
-                required
-                style={styles.input('email', focusedField === 'email')}
-                onFocus={() => {
-                  setFocusedField('email');
-                  setHoveredField('email');
-                }}
-                onBlur={() => {
-                  setFocusedField(null);
-                  if (hoveredField === 'email') setHoveredField(null);
-                }}
-                onMouseEnter={() => setHoveredField('email')}
-                onMouseLeave={() => {
-                  if (focusedField !== 'email' && hoveredField === 'email') setHoveredField(null);
-                }}
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={isSubmitting}
-              />
+        {/* Form - NOW PROPERLY ALIGNED */}
+        <div style={styles.formContainer}>
+          <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            {/* Email Field - PROPERLY ALIGNED */}
+            <div style={styles.formGroup}>
+              <div style={styles.labelRow}>
+                <label style={{...styles.label, marginBottom: 0}}>EMAIL ADDRESS</label>
+              </div>
+              <div style={styles.inputContainer}>
+                <div style={styles.inputIcon}>📧</div>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  style={styles.input('email', focusedField === 'email')}
+                  onFocus={() => {
+                    setFocusedField('email');
+                    setHoveredField('email');
+                  }}
+                  onBlur={() => {
+                    setFocusedField(null);
+                    if (hoveredField === 'email') setHoveredField(null);
+                  }}
+                  onMouseEnter={() => setHoveredField('email')}
+                  onMouseLeave={() => {
+                    if (focusedField !== 'email' && hoveredField === 'email') setHoveredField(null);
+                  }}
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                />
+              </div>
+              {errors.email && (
+                <p style={styles.errorText}>
+                  <span>❌</span> {errors.email}
+                </p>
+              )}
             </div>
-            {errors.email && (
-              <p style={styles.errorText}>
-                <span>❌</span> {errors.email}
-              </p>
-            )}
-          </div>
 
-          {/* Password Field */}
-          <div style={styles.formGroup}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <label style={styles.label}>Password</label>
-              <Link 
-                to="/forgot-password" 
-                style={styles.forgotPasswordLink(linkHovered.forgotPassword)}
-                onMouseEnter={() => setLinkHovered(prev => ({ ...prev, forgotPassword: true }))}
-                onMouseLeave={() => setLinkHovered(prev => ({ ...prev, forgotPassword: false }))}
+            {/* Password Field - PROPERLY ALIGNED */}
+            <div style={styles.formGroup}>
+              <div style={styles.labelRow}>
+                <label style={{...styles.label, marginBottom: 0}}>PASSWORD</label>
+                <Link 
+                  to="/forgot-password" 
+                  style={styles.forgotPasswordLink(linkHovered.forgotPassword)}
+                  onMouseEnter={() => setLinkHovered(prev => ({ ...prev, forgotPassword: true }))}
+                  onMouseLeave={() => setLinkHovered(prev => ({ ...prev, forgotPassword: false }))}
+                >
+                  Forgot password?
+                  <span className="underline" style={{
+                    ...styles.linkUnderline,
+                    transform: linkHovered.forgotPassword ? 'scaleX(1)' : 'scaleX(0)'
+                  }}></span>
+                </Link>
+              </div>
+              <div style={styles.inputContainer}>
+                <div style={styles.inputIcon}>🔒</div>
+                <input
+                  type="password"
+                  name="password"
+                  required
+                  style={styles.input('password', focusedField === 'password')}
+                  onFocus={() => {
+                    setFocusedField('password');
+                    setHoveredField('password');
+                  }}
+                  onBlur={() => {
+                    setFocusedField(null);
+                    if (hoveredField === 'password') setHoveredField(null);
+                  }}
+                  onMouseEnter={() => setHoveredField('password')}
+                  onMouseLeave={() => {
+                    if (focusedField !== 'password' && hoveredField === 'password') setHoveredField(null);
+                  }}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                />
+              </div>
+              {errors.password && (
+                <p style={styles.errorText}>
+                  <span>❌</span> {errors.password}
+                </p>
+              )}
+            </div>
+
+            {/* Submit Button - PROPERLY CENTERED */}
+            <div style={styles.buttonContainer}>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                style={styles.button}
+                onMouseEnter={() => !isSubmitting && setButtonHovered(true)}
+                onMouseLeave={() => !isSubmitting && setButtonHovered(false)}
+                onClick={handleButtonClick}
               >
-                Forgot password?
-                <span className="underline" style={{
-                  ...styles.linkUnderline,
-                  transform: linkHovered.forgotPassword ? 'scaleX(1)' : 'scaleX(0)'
-                }}></span>
-              </Link>
+                {isSubmitting ? (
+                  <>
+                    <span style={{
+                      width: '22px',
+                      height: '22px',
+                      border: '3px solid transparent',
+                      borderTop: '3px solid white',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                      marginRight: '14px'
+                    }}></span>
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontSize: '22px' }}>🚀</span>
+                    Sign In
+                  </>
+                )}
+                {ripple && (
+                  <span style={styles.buttonRipple(ripple.x, ripple.y, ripple.size)}></span>
+                )}
+              </button>
             </div>
-            <div style={styles.inputContainer}>
-              <div style={styles.inputIcon}>🔒</div>
-              <input
-                type="password"
-                name="password"
-                required
-                style={styles.input('password', focusedField === 'password')}
-                onFocus={() => {
-                  setFocusedField('password');
-                  setHoveredField('password');
-                }}
-                onBlur={() => {
-                  setFocusedField(null);
-                  if (hoveredField === 'password') setHoveredField(null);
-                }}
-                onMouseEnter={() => setHoveredField('password')}
-                onMouseLeave={() => {
-                  if (focusedField !== 'password' && hoveredField === 'password') setHoveredField(null);
-                }}
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isSubmitting}
-              />
-            </div>
-            {errors.password && (
-              <p style={styles.errorText}>
-                <span>❌</span> {errors.password}
-              </p>
-            )}
-          </div>
+          </form>
+        </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            style={styles.button}
-            onMouseEnter={() => !isSubmitting && setButtonHovered(true)}
-            onMouseLeave={() => !isSubmitting && setButtonHovered(false)}
-            onClick={handleButtonClick}
-          >
-            {isSubmitting ? (
-              <>
-                <span style={{
-                  width: '22px',
-                  height: '22px',
-                  border: '3px solid transparent',
-                  borderTop: '3px solid white',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  marginRight: '14px'
-                }}></span>
-                Signing in...
-              </>
-            ) : (
-              <>
-                <span style={{ fontSize: '22px' }}>🚀</span>
-                Sign In
-              </>
-            )}
-            {ripple && (
-              <span style={styles.buttonRipple(ripple.x, ripple.y, ripple.size)}></span>
-            )}
-          </button>
-        </form>
-
-        {/* Demo Account */}
+        {/* Demo Account - PROPERLY CENTERED */}
         <div 
           style={styles.demoBox}
           onMouseEnter={() => setDemoBoxHovered(true)}
@@ -590,7 +643,7 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Register Link */}
+        {/* Register Link - PROPERLY CENTERED */}
         <div style={styles.linkContainer}>
           Don't have an account?{' '}
           <Link 
@@ -607,7 +660,7 @@ const Login = () => {
           </Link>
         </div>
 
-        {/* Footer */}
+        {/* Footer - PROPERLY CENTERED */}
         <div style={styles.footer}>
           © {new Date().getFullYear()} TaskFlow. All rights reserved.
         </div>
@@ -665,6 +718,15 @@ const Login = () => {
           
           .subtitle {
             font-size: 14px;
+          }
+          
+          .logoContainer {
+            width: 80px;
+            height: 80px;
+          }
+          
+          .logoIcon {
+            font-size: 36px;
           }
         }
       `}</style>
